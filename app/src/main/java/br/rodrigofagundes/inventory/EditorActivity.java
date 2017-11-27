@@ -31,7 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.CheckBox;
+import android.widget.Switch;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -42,7 +42,7 @@ import br.rodrigofagundes.inventory.data.ProductContract.ProductEntry;
  */
 public class EditorActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
-    private CheckBox mCheckFollow;
+    private Switch mCheckFollow;
 
     private boolean mProductHasChanged = false;
 
@@ -68,7 +68,7 @@ public class EditorActivity extends AppCompatActivity
                     this);
         }
 
-        mCheckFollow = (CheckBox)findViewById(R.id.edit_product_follow);
+        mCheckFollow = (Switch)findViewById(R.id.edit_product_follow);
 
         ((EditText)findViewById(R.id.edit_product_name)).setOnTouchListener(mTouchListener);
         ((EditText)findViewById(R.id.edit_product_price)).setOnTouchListener(mTouchListener);
@@ -136,7 +136,7 @@ public class EditorActivity extends AppCompatActivity
                 .toString().trim();
         String quantityString = ((EditText) findViewById(R.id.edit_product_quantity)).getText()
                 .toString().trim();
-        Boolean isFollowing = ((CheckBox) findViewById(R.id.edit_product_follow)).isChecked();
+        Boolean isFollowing = ((Switch) findViewById(R.id.edit_product_follow)).isChecked();
 
         double price = Integer.parseInt(priceString) / 100;
         int quantity = Integer.parseInt(quantityString);
@@ -225,7 +225,7 @@ public class EditorActivity extends AppCompatActivity
         ((EditText) findViewById(R.id.edit_product_name)).setText("");
         ((EditText) findViewById(R.id.edit_product_price)).setText("");
         ((EditText) findViewById(R.id.edit_product_quantity)).setText("");
-        ((CheckBox) findViewById(R.id.edit_product_follow)).setChecked(false);
+        ((Switch) findViewById(R.id.edit_product_follow)).setChecked(false);
     }
 
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {

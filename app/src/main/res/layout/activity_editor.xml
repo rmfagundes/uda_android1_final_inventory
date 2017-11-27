@@ -29,7 +29,8 @@
         <!-- Label -->
         <TextView
             android:text="@string/category_name"
-            style="@style/CategoryStyle" />
+            style="@style/CategoryStyle"
+            android:labelFor="@id/edit_product_name"/>
 
         <!-- Name field -->
         <EditText
@@ -48,28 +49,14 @@
         <!-- Label -->
         <TextView
             android:text="@string/category_price"
-            style="@style/CategoryStyle" />
+            style="@style/CategoryStyle"
+            android:labelFor="@id/edit_product_price"/>
 
-        <!-- Input fields -->
-        <RelativeLayout
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:paddingLeft="4dp">
-
-            <!-- Units for weight (R$) -->
-            <TextView
-                android:id="@+id/label_price_unit"
-                android:text="@string/unit_product_price"
-                style="@style/EditorUnitsStyle"/>
-
-            <!-- Weight field -->
-            <EditText
-                android:id="@+id/edit_product_price"
-                android:hint="@string/hint_product_price"
-                android:inputType="number"
-                style="@style/EditorFieldStyle" />
-        </RelativeLayout>
+        <EditText
+            android:id="@+id/edit_product_price"
+            android:hint="@string/hint_product_price"
+            android:inputType="number"
+            style="@style/EditorFieldStyle" />
     </LinearLayout>
 
     <!-- Quantity field -->
@@ -81,7 +68,8 @@
         <!-- Label -->
         <TextView
             android:text="@string/category_quantity"
-            style="@style/CategoryStyle" />
+            style="@style/CategoryStyle"
+            android:labelFor="@id/edit_product_quantity"/>
 
         <!-- Name field -->
         <EditText
@@ -99,11 +87,13 @@
 
         <!-- Label -->
         <TextView
-            android:text="@string/category_price"
-            style="@style/CategoryStyle" />
+            android:text="@string/category_follow"
+            style="@style/CategoryStyle"
+            android:labelFor="@id/edit_product_follow"/>
 
         <!-- Name field -->
-        <CheckBox
+        <Switch
+
             android:id="@+id/edit_product_follow"
             style="@style/EditorFieldStyle" />
     </LinearLayout>

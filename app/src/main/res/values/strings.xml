@@ -11,7 +11,7 @@
     <string name="action_delete">Delete</string>
 
     <string name="category_name">Name</string>
-    <string name="category_price">Price</string>
+    <string name="category_price">Price (R$)</string>
     <string name="category_measurement">Measurement</string>
     <string name="category_quantity">Amount</string>
     <string name="category_follow">Follow?</string>
@@ -19,8 +19,6 @@
     <string name="hint_product_name">Name</string>
     <string name="hint_product_quantity">Amount</string>
     <string name="hint_product_price">Price</string>
-
-    <string name="unit_product_price">R$</string>
 
     <!-- Texto do título para a view vazia, que descreve a imagem vazia da teia de aranha -->
     <string name="empty_view_title_text">It\'s a bit abandoned here...</string>

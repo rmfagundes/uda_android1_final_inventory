@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import br.rodrigofagundes.inventory.data.ProductContract.ProductEntry;
 
 /**
@@ -53,10 +56,18 @@ public class ProductCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         String currentName = cursor.getString(cursor.getColumnIndex(
                 ProductEntry.COLUMN_PRODUCT_NAME));
-        String currentBreed = cursor.getString(cursor.getColumnIndex(
-                ProductEntry.COLUMN_PRODUCT_QUANTITY));
+        String currentAmount = String.valueOf(cursor.getInt(cursor.getColumnIndex(
+                ProductEntry.COLUMN_PRODUCT_QUANTITY)));
+
+
+        double currentPrice = cursor.getInt(cursor.getColumnIndex(
+                ProductEntry.COLUMN_PRODUCT_PRICE)) / 100;
+
+        Locale ptBr = new Locale("pt", "BR");
+        String price = NumberFormat.getCurrencyInstance(ptBr).format(currentPrice);
 
         ((TextView)view.findViewById(R.id.name)).setText(currentName);
-        ((TextView)view.findViewById(R.id.summary)).setText(currentBreed);
+        ((TextView)view.findViewById(R.id.quantity)).setText(currentAmount);
+        ((TextView)view.findViewById(R.id.price)).setText(price);
     }
 }
