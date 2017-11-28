@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_empty_shelter"/>
+            android:src="@drawable/ic_empty_storage"/>
 
         <TextView
             android:id="@+id/empty_title_text"
@@ -57,5 +57,5 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_add_product"/>
+        android:src="@drawable/ic_new_product"/>
 </RelativeLayout>

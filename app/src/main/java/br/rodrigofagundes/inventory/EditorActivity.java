@@ -20,6 +20,7 @@ import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,6 +34,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import br.rodrigofagundes.inventory.data.ProductContract.ProductEntry;
@@ -42,6 +44,8 @@ import br.rodrigofagundes.inventory.data.ProductContract.ProductEntry;
  */
 public class EditorActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
+    // TODO [4a] Melhorar o layout
+    // TODO [6a] Resolver o problema do update
     private Switch mCheckFollow;
 
     private boolean mProductHasChanged = false;
@@ -71,8 +75,11 @@ public class EditorActivity extends AppCompatActivity
         mCheckFollow = (Switch)findViewById(R.id.edit_product_follow);
 
         ((EditText)findViewById(R.id.edit_product_name)).setOnTouchListener(mTouchListener);
+        ((EditText)findViewById(R.id.edit_product_supplier)).setOnTouchListener(mTouchListener);
+        ((EditText)findViewById(R.id.edit_product_supplier_email)).setOnTouchListener(mTouchListener);
         ((EditText)findViewById(R.id.edit_product_price)).setOnTouchListener(mTouchListener);
-        ((EditText)findViewById(R.id.edit_product_quantity)).setOnTouchListener(mTouchListener);
+        ((EditText)findViewById(R.id.edit_product_bulk)).setOnTouchListener(mTouchListener);
+
         mCheckFollow.setOnTouchListener(mTouchListener);
     }
 
@@ -96,6 +103,17 @@ public class EditorActivity extends AppCompatActivity
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
                 showDeleteConfirmationDialog();
+                return true;
+            // Respond to a click on the "Delete" menu option
+            case R.id.action_buy_more:
+                String mailTo = "mailto:" +
+                        ((EditText)findViewById(R.id.edit_product_supplier_email)).getText() +
+                        "?subject="+
+                        Uri.encode("Product order - " +
+                            ((EditText)findViewById(R.id.edit_product_name)).getText());
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                emailIntent.setData(Uri.parse(mailTo));
+                startActivity(emailIntent);
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
@@ -132,9 +150,13 @@ public class EditorActivity extends AppCompatActivity
         // Use trim to eliminate leading or trailing white space
         String nameString = ((EditText) findViewById(R.id.edit_product_name)).getText()
                 .toString().trim();
+        String supplierString = ((EditText) findViewById(R.id.edit_product_supplier)).getText()
+                .toString().trim();
+        String supplierEmailString = ((EditText) findViewById(R.id.edit_product_supplier_email)).getText()
+                .toString().trim();
         String priceString = ((EditText) findViewById(R.id.edit_product_price)).getText()
                 .toString().trim();
-        String quantityString = ((EditText) findViewById(R.id.edit_product_quantity)).getText()
+        String quantityString = ((TextView) findViewById(R.id.edit_product_quantity)).getText()
                 .toString().trim();
         Boolean isFollowing = ((Switch) findViewById(R.id.edit_product_follow)).isChecked();
 
@@ -146,6 +168,8 @@ public class EditorActivity extends AppCompatActivity
         // and product attributes from the editor are the values.
         ContentValues values = new ContentValues();
         values.put(ProductEntry.COLUMN_PRODUCT_NAME, nameString);
+        values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER, supplierString);
+        values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL, supplierEmailString);
         values.put(ProductEntry.COLUMN_PRODUCT_PRICE, price);
         values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, quantity);
         values.put(ProductEntry.COLUMN_PRODUCT_FOLLOW, following);
@@ -181,7 +205,7 @@ public class EditorActivity extends AppCompatActivity
     private boolean isBlank() {
         if (TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_name)).getText()) &&
                 TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_price)).getText()) &&
-                TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_quantity)).getText()) &&
+                TextUtils.isEmpty(((TextView) findViewById(R.id.edit_product_quantity)).getText()) &&
                 !mCheckFollow.isChecked()) {
             return true;
         }
@@ -193,6 +217,8 @@ public class EditorActivity extends AppCompatActivity
         String[] projection = {
                 ProductEntry._ID,
                 ProductEntry.COLUMN_PRODUCT_NAME,
+                ProductEntry.COLUMN_PRODUCT_SUPPLIER,
+                ProductEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL,
                 ProductEntry.COLUMN_PRODUCT_PRICE,
                 ProductEntry.COLUMN_PRODUCT_QUANTITY,
                 ProductEntry.COLUMN_PRODUCT_FOLLOW
@@ -208,12 +234,18 @@ public class EditorActivity extends AppCompatActivity
             return;
         }
 
+        ((EditText) findViewById(R.id.edit_product_bulk)).setText("0");
+
         if (data.moveToFirst()) {
             ((EditText) findViewById(R.id.edit_product_name)).setText(data.getString(data
                     .getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME)));
+            ((EditText) findViewById(R.id.edit_product_supplier)).setText(data.getString(data
+                    .getColumnIndex(ProductEntry.COLUMN_PRODUCT_SUPPLIER)));
+            ((EditText) findViewById(R.id.edit_product_supplier_email)).setText(data.getString(data
+                    .getColumnIndex(ProductEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL)));
             ((EditText) findViewById(R.id.edit_product_price)).setText(String.valueOf(data.
                     getInt(data.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE))));
-            ((EditText) findViewById(R.id.edit_product_quantity)).setText(String.valueOf(data.
+            ((TextView) findViewById(R.id.edit_product_quantity)).setText(String.valueOf(data.
                     getInt(data.getColumnIndex(ProductEntry.COLUMN_PRODUCT_QUANTITY))));
             mCheckFollow.setChecked(data.getInt(data.getColumnIndex(ProductEntry
                     .COLUMN_PRODUCT_FOLLOW)) == 1);
@@ -223,8 +255,11 @@ public class EditorActivity extends AppCompatActivity
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         ((EditText) findViewById(R.id.edit_product_name)).setText("");
+        ((EditText) findViewById(R.id.edit_product_supplier)).setText("");
+        ((EditText) findViewById(R.id.edit_product_supplier_email)).setText("");
         ((EditText) findViewById(R.id.edit_product_price)).setText("");
-        ((EditText) findViewById(R.id.edit_product_quantity)).setText("");
+        ((TextView) findViewById(R.id.edit_product_quantity)).setText("");
+        ((EditText) findViewById(R.id.edit_product_bulk)).setText(0);
         ((Switch) findViewById(R.id.edit_product_follow)).setChecked(false);
     }
 
@@ -328,5 +363,47 @@ public class EditorActivity extends AppCompatActivity
         } else {
             Toast.makeText(this, getString(R.string.editor_delete_product_failed), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void subtractOne(View view) {
+        int current = Integer.valueOf(((TextView)findViewById(R.id.edit_product_quantity))
+                .getText().toString());
+        current--;
+        if (current >= 0) {
+            ((TextView) findViewById(R.id.edit_product_quantity)).setText(String.valueOf(current));
+        } else {
+            Toast.makeText(this, getString(R.string.editor_stock_short),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void addOne(View view) {
+        int current = Integer.valueOf(((TextView)findViewById(R.id.edit_product_quantity))
+                .getText().toString());
+        ((TextView)findViewById(R.id.edit_product_quantity)).setText(String.valueOf(++current));
+    }
+
+    public void subtract(View view) {
+        int current = Integer.valueOf(((TextView)findViewById(R.id.edit_product_quantity))
+                .getText().toString());
+        int bulk = Integer.valueOf(((EditText)findViewById(R.id.edit_product_bulk))
+                .getText().toString());
+        current -= bulk;
+        if (current >= 0) {
+            ((TextView) findViewById(R.id.edit_product_quantity)).setText(
+                    String.valueOf(current--));
+        } else {
+            Toast.makeText(this, getString(R.string.editor_stock_short),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void add(View view) {
+        int current = Integer.valueOf(((TextView)findViewById(R.id.edit_product_quantity))
+                .getText().toString());
+        int bulk = Integer.valueOf(((EditText)findViewById(R.id.edit_product_bulk))
+                .getText().toString());
+        ((TextView)findViewById(R.id.edit_product_quantity)).setText(
+                String.valueOf(current + bulk));
     }
 }

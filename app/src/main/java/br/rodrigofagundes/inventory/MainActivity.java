@@ -24,7 +24,9 @@ import br.rodrigofagundes.inventory.data.ProductContract.ProductEntry;
 
 
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Cursor> {
+    // TODO [4a] Botão vender em cada linha
     private static final int PRODUCT_LOADER = 0;
     private ProductCursorAdapter pca;
 

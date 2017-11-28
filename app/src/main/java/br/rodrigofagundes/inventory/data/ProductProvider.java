@@ -21,7 +21,7 @@ public class ProductProvider extends ContentProvider {
     private static final int PRODUCTS = 100;
 
     /** URI matcher code for the content URI for a single pet in the products table */
-    private static final int PPRODUCT_ID = 101;
+    private static final int PRODUCT_ID = 101;
 
     /**
      * UriMatcher object to match a content URI to a corresponding code.
@@ -35,7 +35,7 @@ public class ProductProvider extends ContentProvider {
         sUriMatcher.addURI(ProductContract.CONTENT_AUTHORITY, ProductContract.PATH_PRODUCTS,
                 PRODUCTS);
         sUriMatcher.addURI(ProductContract.CONTENT_AUTHORITY,
-                ProductContract.PATH_PRODUCTS + "/#", PPRODUCT_ID);
+                ProductContract.PATH_PRODUCTS + "/#", PRODUCT_ID);
     }
 
     private ProductsDbHelper mDbHelper;
@@ -71,7 +71,7 @@ public class ProductProvider extends ContentProvider {
                         projection, selection, selectionArgs, null, null,
                         sortOrder);
                 break;
-            case PPRODUCT_ID:
+            case PRODUCT_ID:
                 selection = ProductContract.ProductEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
 
@@ -140,7 +140,7 @@ public class ProductProvider extends ContentProvider {
         switch (match) {
             case PRODUCTS:
                 return updatePet(uri, contentValues, selection, selectionArgs);
-            case PPRODUCT_ID:
+            case PRODUCT_ID:
                 selection = ProductContract.ProductEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
                 return updatePet(uri, contentValues, selection, selectionArgs);
@@ -186,7 +186,7 @@ public class ProductProvider extends ContentProvider {
                 rowsAffected = database.delete(ProductContract.ProductEntry.TABLE_NAME, selection,
                         selectionArgs);
                 break;
-            case PPRODUCT_ID:
+            case PRODUCT_ID:
                 // Deleta um único registro dado pelo ID na URI
                 selection = ProductContract.ProductEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
@@ -213,7 +213,7 @@ public class ProductProvider extends ContentProvider {
         switch (match) {
             case PRODUCTS:
                 return ProductContract.ProductEntry.CONTENT_LIST_TYPE;
-            case PPRODUCT_ID:
+            case PRODUCT_ID:
                 return ProductContract.ProductEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);

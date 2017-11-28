@@ -20,6 +20,8 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + ProductContract.ProductEntry.TABLE_NAME + " (" +
                     ProductContract.ProductEntry._ID + " INTEGER PRIMARY KEY," +
                     ProductContract.ProductEntry.COLUMN_PRODUCT_NAME + TEXT_TYPE + COMMA_SEP +
+                    ProductContract.ProductEntry.COLUMN_PRODUCT_SUPPLIER + TEXT_TYPE + COMMA_SEP +
+                    ProductContract.ProductEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL + TEXT_TYPE + COMMA_SEP +
                     ProductContract.ProductEntry.COLUMN_PRODUCT_QUANTITY + INTEGER_TYPE + COMMA_SEP +
                     ProductContract.ProductEntry.COLUMN_PRODUCT_PRICE + INTEGER_TYPE + COMMA_SEP +
                     ProductContract.ProductEntry.COLUMN_PRODUCT_FOLLOW + INTEGER_TYPE + " )";
