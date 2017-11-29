@@ -27,6 +27,7 @@
 
     <string name="buy_bulk">Buy Bulk</string>
     <string name="sell_bulk">Sell Bulk</string>
+    <string name="sell">Sell</string>
 
     <string name="editor_stock_short">Stock cannot be below zero!</string>
 

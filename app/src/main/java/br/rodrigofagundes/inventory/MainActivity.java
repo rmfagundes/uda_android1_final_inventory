@@ -18,15 +18,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import br.rodrigofagundes.inventory.data.ProductContract.ProductEntry;
-
+import br.rodrigofagundes.inventory.data.ProductProvider;
 
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
-    // TODO [4a] Botão vender em cada linha
     private static final int PRODUCT_LOADER = 0;
     private ProductCursorAdapter pca;
 
@@ -174,5 +174,64 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         pca.swapCursor(null);
+    }
+
+    public void subtractOne(int currentId, int amnt) {
+        if (amnt >= 0) {
+            ((TextView)findViewById(R.id.quantity)).setText(String.valueOf(amnt));
+
+            // Loads the complete cursor
+            String[] projection = {
+                    ProductEntry._ID,
+                    ProductEntry.COLUMN_PRODUCT_NAME,
+                    ProductEntry.COLUMN_PRODUCT_SUPPLIER,
+                    ProductEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL,
+                    ProductEntry.COLUMN_PRODUCT_PRICE,
+                    ProductEntry.COLUMN_PRODUCT_QUANTITY,
+                    ProductEntry.COLUMN_PRODUCT_FOLLOW
+            };
+
+            ProductProvider pp = new ProductProvider();
+            Cursor data = pp.query(ContentUris.withAppendedId(
+                    ProductEntry.CONTENT_URI, currentId), projection, null,
+                    null, null);
+
+            if (data.moveToFirst()) {
+                ContentValues values = new ContentValues();
+                values.put(ProductEntry.COLUMN_PRODUCT_NAME,
+                        data.getString(data.getColumnIndex(
+                                ProductEntry.COLUMN_PRODUCT_NAME)));
+                values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER,
+                        data.getString(data.getColumnIndex(
+                                ProductEntry.COLUMN_PRODUCT_SUPPLIER)));
+                values.put(ProductEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL,
+                        data.getString(data.getColumnIndex(
+                                ProductEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL)));
+                values.put(ProductEntry.COLUMN_PRODUCT_PRICE,
+                        data.getInt(data.getColumnIndex(
+                                ProductEntry.COLUMN_PRODUCT_PRICE)));
+                values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, amnt);
+                values.put(ProductEntry.COLUMN_PRODUCT_FOLLOW,
+                        data.getInt(data.getColumnIndex(
+                                ProductEntry.COLUMN_PRODUCT_FOLLOW)));
+
+                int rowsAffected = getContentResolver().update(
+                        ContentUris.withAppendedId(ProductEntry.CONTENT_URI, currentId),
+                        values, null,null);
+                // Mostra uma mensagem toast dependendo se ou não a atualização foi bem-sucedida.
+                if (rowsAffected == 0) {
+                    // Se nenhuma linha foi afetada, então houve um erro com o update.
+                    Toast.makeText(this, getString(R.string.editor_update_product_failed),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    // Caso contrário, o update foi bem sucedido e podemos mostrar um toast.
+                    Toast.makeText(this, getString(R.string.editor_update_product_successful),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else {
+            Toast.makeText(this, getString(R.string.editor_stock_short),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }

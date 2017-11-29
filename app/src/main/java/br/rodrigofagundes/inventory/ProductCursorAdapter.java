@@ -1,17 +1,26 @@
 package br.rodrigofagundes.inventory;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.NumberFormat;
 import java.util.Locale;
 
 import br.rodrigofagundes.inventory.data.ProductContract.ProductEntry;
+import br.rodrigofagundes.inventory.data.ProductProvider;
 
 /**
  * Created by rmfagundes on 23/11/2017.
@@ -56,12 +65,13 @@ public class ProductCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         String currentName = cursor.getString(cursor.getColumnIndex(
                 ProductEntry.COLUMN_PRODUCT_NAME));
-        String currentAmount = String.valueOf(cursor.getInt(cursor.getColumnIndex(
+        final String currentAmount = String.valueOf(cursor.getInt(cursor.getColumnIndex(
                 ProductEntry.COLUMN_PRODUCT_QUANTITY)));
-
 
         double currentPrice = cursor.getInt(cursor.getColumnIndex(
                 ProductEntry.COLUMN_PRODUCT_PRICE)) / 100;
+
+        final int currentId = cursor.getInt(cursor.getColumnIndex(ProductEntry._ID));
 
         Locale ptBr = new Locale("pt", "BR");
         String price = NumberFormat.getCurrencyInstance(ptBr).format(currentPrice);
@@ -69,5 +79,16 @@ public class ProductCursorAdapter extends CursorAdapter {
         ((TextView)view.findViewById(R.id.name)).setText(currentName);
         ((TextView)view.findViewById(R.id.quantity)).setText(currentAmount);
         ((TextView)view.findViewById(R.id.price)).setText(price);
+
+        Button btnSell = (Button)view.findViewById(R.id.sell);
+        btnSell.setOnClickListener(
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int amnt = Integer.valueOf(currentAmount) - 1;
+                    ((MainActivity)view.getContext()).subtractOne(currentId, amnt);
+                }
+            }
+        );
     }
 }

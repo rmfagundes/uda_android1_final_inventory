@@ -37,4 +37,16 @@
         android:fontFamily="sans-serif-medium"
         android:textAppearance="?android:textAppearanceLarge"
         android:textColor="#2B3D4D"  />
+
+    <Button
+        android:id="@+id/sell"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/sell"
+        android:onClick="subtractOne"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:layout_margin="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
 </LinearLayout>

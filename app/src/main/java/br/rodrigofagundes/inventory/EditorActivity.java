@@ -44,8 +44,7 @@ import br.rodrigofagundes.inventory.data.ProductContract.ProductEntry;
  */
 public class EditorActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
-    // TODO [4a] Melhorar o layout
-    // TODO [6a] Resolver o problema do update
+    // TODO Update falha, mas não sobre exceção
     private Switch mCheckFollow;
 
     private boolean mProductHasChanged = false;
@@ -259,7 +258,7 @@ public class EditorActivity extends AppCompatActivity
         ((EditText) findViewById(R.id.edit_product_supplier_email)).setText("");
         ((EditText) findViewById(R.id.edit_product_price)).setText("");
         ((TextView) findViewById(R.id.edit_product_quantity)).setText("");
-        ((EditText) findViewById(R.id.edit_product_bulk)).setText(0);
+        ((EditText) findViewById(R.id.edit_product_bulk)).setText("0");
         ((Switch) findViewById(R.id.edit_product_follow)).setChecked(false);
     }
 
