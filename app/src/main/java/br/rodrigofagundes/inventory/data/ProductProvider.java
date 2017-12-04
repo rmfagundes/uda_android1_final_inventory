@@ -59,7 +59,6 @@ public class ProductProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
         // Get readable database
-        // TODO Está dando erro. mDbHelper nulo?
         SQLiteDatabase database = mDbHelper.getReadableDatabase();
 
         // This cursor will hold the result of the query
@@ -143,6 +142,7 @@ public class ProductProvider extends ContentProvider {
                 return updateProduct(uri, contentValues, selection, selectionArgs);
             case PRODUCT_ID:
                 selection = ProductContract.ProductEntry._ID + "=?";
+                Log.e("PQP", String.valueOf(ContentUris.parseId(uri)));
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
                 return updateProduct(uri, contentValues, selection, selectionArgs);
             default:
@@ -157,11 +157,8 @@ public class ProductProvider extends ContentProvider {
      */
     private int updateProduct(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
-
-        String whereClause = ProductContract.ProductEntry._ID + "=?";
-        String[] whereArgs = { (String)values.get(ProductContract.ProductEntry._ID) };
         int rowsAffected = database.update(ProductContract.ProductEntry.TABLE_NAME, values,
-                whereClause, whereArgs);
+                selection, selectionArgs);
 
         if (rowsAffected != 0) {
             getContext().getContentResolver().notifyChange(uri, null);

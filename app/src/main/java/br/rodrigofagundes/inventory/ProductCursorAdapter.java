@@ -4,14 +4,19 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,9 +72,10 @@ public class ProductCursorAdapter extends CursorAdapter {
                 ProductEntry.COLUMN_PRODUCT_NAME));
         final String currentAmount = String.valueOf(cursor.getInt(cursor.getColumnIndex(
                 ProductEntry.COLUMN_PRODUCT_QUANTITY)));
-
         double currentPrice = cursor.getInt(cursor.getColumnIndex(
                 ProductEntry.COLUMN_PRODUCT_PRICE)) / 100;
+        byte[] currentImage = cursor.getBlob(cursor.getColumnIndex(
+                ProductEntry.COLUMN_PRODUCT_IMAGE));
 
         final int currentId = cursor.getInt(cursor.getColumnIndex(ProductEntry._ID));
 
@@ -79,6 +85,22 @@ public class ProductCursorAdapter extends CursorAdapter {
         ((TextView)view.findViewById(R.id.name)).setText(currentName);
         ((TextView)view.findViewById(R.id.quantity)).setText(currentAmount);
         ((TextView)view.findViewById(R.id.price)).setText(price);
+        if (currentImage == null) {
+            ((ImageView) view.findViewById(R.id.image)).setImageResource(
+                    android.R.drawable.ic_menu_gallery);
+        } else {
+            ((ImageView) view.findViewById(R.id.image)).setImageBitmap(
+                    BitmapFactory.decodeByteArray(currentImage, 0, currentImage.length));
+        }
+
+        view.findViewById(R.id.summary).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), EditorActivity.class);
+                intent.setData(ContentUris.withAppendedId(ProductEntry.CONTENT_URI, currentId));
+                view.getContext().startActivity(intent);
+            }
+        });
 
         Button btnSell = (Button)view.findViewById(R.id.sell);
         btnSell.setOnClickListener(

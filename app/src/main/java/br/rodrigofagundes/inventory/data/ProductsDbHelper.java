@@ -15,6 +15,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String INTEGER_TYPE = " INTEGER";
+    private static final String BLOB_TYPE = " BLOB";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + ProductContract.ProductEntry.TABLE_NAME + " (" +
@@ -24,7 +25,8 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
                     ProductContract.ProductEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL + TEXT_TYPE + COMMA_SEP +
                     ProductContract.ProductEntry.COLUMN_PRODUCT_QUANTITY + INTEGER_TYPE + COMMA_SEP +
                     ProductContract.ProductEntry.COLUMN_PRODUCT_PRICE + INTEGER_TYPE + COMMA_SEP +
-                    ProductContract.ProductEntry.COLUMN_PRODUCT_FOLLOW + INTEGER_TYPE + " )";
+                    ProductContract.ProductEntry.COLUMN_PRODUCT_FOLLOW + INTEGER_TYPE + COMMA_SEP +
+                    ProductContract.ProductEntry.COLUMN_PRODUCT_IMAGE + BLOB_TYPE + " )";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + ProductContract.ProductEntry.TABLE_NAME;

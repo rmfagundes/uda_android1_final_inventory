@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -32,10 +33,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import br.rodrigofagundes.inventory.data.ProductContract.ProductEntry;
 
@@ -44,13 +51,14 @@ import br.rodrigofagundes.inventory.data.ProductContract.ProductEntry;
  */
 public class EditorActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
-    // TODO Update falha, mas não sobre exceção
     private Switch mCheckFollow;
+    private ImageView mImageHolder;
+    private byte[] mImageBA;
 
     private boolean mProductHasChanged = false;
 
     private static final int EXISTING_PRODUCT_LOADER = 0;
-    //private ProductCursorAdapter pca;
+    private static final int PICK_IMAGE = 1;
     private Uri currentUri;
 
     @Override
@@ -73,11 +81,27 @@ public class EditorActivity extends AppCompatActivity
 
         mCheckFollow = (Switch)findViewById(R.id.edit_product_follow);
 
+        ((TextView) findViewById(R.id.edit_product_quantity)).setText("0");
+        ((EditText) findViewById(R.id.edit_product_bulk)).setText("0");
+
+        mImageHolder = ((ImageView) findViewById(R.id.image));
+        mImageHolder.setImageResource(android.R.drawable.ic_menu_gallery);
+        mImageHolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+            }
+        });
+
         ((EditText)findViewById(R.id.edit_product_name)).setOnTouchListener(mTouchListener);
         ((EditText)findViewById(R.id.edit_product_supplier)).setOnTouchListener(mTouchListener);
         ((EditText)findViewById(R.id.edit_product_supplier_email)).setOnTouchListener(mTouchListener);
         ((EditText)findViewById(R.id.edit_product_price)).setOnTouchListener(mTouchListener);
         ((EditText)findViewById(R.id.edit_product_bulk)).setOnTouchListener(mTouchListener);
+        ((ImageView)findViewById(R.id.image)).setOnTouchListener(mTouchListener);
 
         mCheckFollow.setOnTouchListener(mTouchListener);
     }
@@ -159,7 +183,7 @@ public class EditorActivity extends AppCompatActivity
                 .toString().trim();
         Boolean isFollowing = ((Switch) findViewById(R.id.edit_product_follow)).isChecked();
 
-        double price = Integer.parseInt(priceString) / 100;
+        double price = Integer.parseInt(priceString);
         int quantity = Integer.parseInt(quantityString);
         int following = isFollowing ? 1 : 0;
 
@@ -172,6 +196,9 @@ public class EditorActivity extends AppCompatActivity
         values.put(ProductEntry.COLUMN_PRODUCT_PRICE, price);
         values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, quantity);
         values.put(ProductEntry.COLUMN_PRODUCT_FOLLOW, following);
+        if (mImageBA != null) {
+            values.put(ProductEntry.COLUMN_PRODUCT_IMAGE, mImageBA);
+        }
 
         // Insert a new row for product in the database, returning the ID of that new row.
         if (currentUri == null) {
@@ -220,7 +247,8 @@ public class EditorActivity extends AppCompatActivity
                 ProductEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL,
                 ProductEntry.COLUMN_PRODUCT_PRICE,
                 ProductEntry.COLUMN_PRODUCT_QUANTITY,
-                ProductEntry.COLUMN_PRODUCT_FOLLOW
+                ProductEntry.COLUMN_PRODUCT_FOLLOW,
+                ProductEntry.COLUMN_PRODUCT_IMAGE
         };
 
         return new CursorLoader(this, currentUri, projection,
@@ -232,9 +260,6 @@ public class EditorActivity extends AppCompatActivity
         if (data == null || data.getCount() < 1) {
             return;
         }
-
-        ((EditText) findViewById(R.id.edit_product_bulk)).setText("0");
-
         if (data.moveToFirst()) {
             ((EditText) findViewById(R.id.edit_product_name)).setText(data.getString(data
                     .getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME)));
@@ -246,6 +271,11 @@ public class EditorActivity extends AppCompatActivity
                     getInt(data.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE))));
             ((TextView) findViewById(R.id.edit_product_quantity)).setText(String.valueOf(data.
                     getInt(data.getColumnIndex(ProductEntry.COLUMN_PRODUCT_QUANTITY))));
+            mImageBA = data.getBlob(data.getColumnIndex(ProductEntry.COLUMN_PRODUCT_IMAGE));
+            if (mImageBA != null) {
+                mImageHolder.setImageBitmap(BitmapFactory.decodeByteArray(mImageBA,
+                        0, mImageBA.length));
+            }
             mCheckFollow.setChecked(data.getInt(data.getColumnIndex(ProductEntry
                     .COLUMN_PRODUCT_FOLLOW)) == 1);
         }
@@ -319,10 +349,29 @@ public class EditorActivity extends AppCompatActivity
         super.onPrepareOptionsMenu(menu);
         // If this is a new product, hide the "Delete" menu item.
         if (currentUri == null) {
-            MenuItem menuItem = menu.findItem(R.id.action_delete);
-            menuItem.setVisible(false);
+            menu.findItem(R.id.action_delete).setVisible(false);
+            menu.findItem(R.id.action_buy_more).setVisible(false);
         }
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_IMAGE) {
+            if (data == null) {
+                Toast.makeText(this, R.string.empty_image, Toast.LENGTH_SHORT);
+                return;
+            }
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(data.getData());
+                mImageBA = IOUtils.toByteArray(inputStream);
+                mImageHolder.setImageBitmap(BitmapFactory.decodeByteArray(mImageBA, 0,
+                        mImageBA.length));
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, R.string.image_not_found, Toast.LENGTH_SHORT);
+            }
+        }
     }
 
     private void showDeleteConfirmationDialog() {

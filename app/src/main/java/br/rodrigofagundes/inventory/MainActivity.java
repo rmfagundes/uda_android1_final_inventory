@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,15 +53,6 @@ public class MainActivity extends AppCompatActivity
 
         pca = new ProductCursorAdapter(this, null);
         productListView.setAdapter(pca);
-
-        productListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, EditorActivity.class);
-                intent.setData(ContentUris.withAppendedId(ProductEntry.CONTENT_URI, id));
-                startActivity(intent);
-            }
-        });
 
         getLoaderManager().initLoader(PRODUCT_LOADER, null, this);
     }
@@ -160,7 +150,8 @@ public class MainActivity extends AppCompatActivity
                 ProductEntry._ID,
                 ProductEntry.COLUMN_PRODUCT_NAME,
                 ProductEntry.COLUMN_PRODUCT_QUANTITY,
-                ProductEntry.COLUMN_PRODUCT_PRICE };
+                ProductEntry.COLUMN_PRODUCT_PRICE,
+                ProductEntry.COLUMN_PRODUCT_IMAGE};
 
         return new CursorLoader(this, ProductEntry.CONTENT_URI, projection,
                 null, null, null);

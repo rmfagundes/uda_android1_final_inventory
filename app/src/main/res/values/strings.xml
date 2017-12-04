@@ -29,6 +29,9 @@
     <string name="sell_bulk">Sell Bulk</string>
     <string name="sell">Sell</string>
 
+    <string name="empty_image">No image selected!</string>
+    <string name="image_not_found">Error loading image!</string>
+
     <string name="editor_stock_short">Stock cannot be below zero!</string>
 
     <!-- Texto do título para a view vazia, que descreve a imagem vazia da teia de aranha -->
