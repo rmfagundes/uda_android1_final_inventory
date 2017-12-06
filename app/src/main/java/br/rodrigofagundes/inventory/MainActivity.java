@@ -27,7 +27,7 @@ import br.rodrigofagundes.inventory.data.ProductProvider;
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int PRODUCT_LOADER = 0;
-    private ProductCursorAdapter pca;
+    private ProductCursorAdapter mProductCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity
         View emptyView = findViewById(R.id.empty_view);
         productListView.setEmptyView(emptyView);
 
-        pca = new ProductCursorAdapter(this, null);
-        productListView.setAdapter(pca);
+        mProductCursorAdapter = new ProductCursorAdapter(this, null);
+        productListView.setAdapter(mProductCursorAdapter);
 
         getLoaderManager().initLoader(PRODUCT_LOADER, null, this);
     }
@@ -159,12 +159,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        pca.swapCursor(cursor);
+        mProductCursorAdapter.swapCursor(cursor);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        pca.swapCursor(null);
+        mProductCursorAdapter.swapCursor(null);
     }
 
     public void subtractOne(int currentId, int amnt) {
@@ -182,8 +182,7 @@ public class MainActivity extends AppCompatActivity
                     ProductEntry.COLUMN_PRODUCT_FOLLOW
             };
 
-            ProductProvider pp = new ProductProvider();
-            Cursor data = pp.query(ContentUris.withAppendedId(
+            Cursor data = getContentResolver().query(ContentUris.withAppendedId(
                     ProductEntry.CONTENT_URI, currentId), projection, null,
                     null, null);
 

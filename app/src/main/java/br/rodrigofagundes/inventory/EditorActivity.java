@@ -167,7 +167,7 @@ public class EditorActivity extends AppCompatActivity
     }
 
     private void saveProduct() {
-        if (currentUri == null && isBlank()) return;
+        if (isBlank()) return;
 
         // Read from input fields
         // Use trim to eliminate leading or trailing white space
@@ -183,8 +183,8 @@ public class EditorActivity extends AppCompatActivity
                 .toString().trim();
         Boolean isFollowing = ((Switch) findViewById(R.id.edit_product_follow)).isChecked();
 
-        double price = Integer.parseInt(priceString);
-        int quantity = Integer.parseInt(quantityString);
+        double price = priceString.isEmpty() ? 0 : Integer.parseInt(priceString);
+        int quantity = quantityString.isEmpty() ? 0 : Integer.parseInt(quantityString);
         int following = isFollowing ? 1 : 0;
 
         // Create a ContentValues object where column names are the keys,
@@ -229,13 +229,12 @@ public class EditorActivity extends AppCompatActivity
     }
 
     private boolean isBlank() {
-        if (TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_name)).getText()) &&
+        return (TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_name)).getText()) &&
                 TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_price)).getText()) &&
+                TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_supplier)).getText()) &&
+                TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_supplier_email)).getText()) &&
                 TextUtils.isEmpty(((TextView) findViewById(R.id.edit_product_quantity)).getText()) &&
-                !mCheckFollow.isChecked()) {
-            return true;
-        }
-        return false;
+                !mCheckFollow.isChecked());
     }
 
     @Override
@@ -359,7 +358,7 @@ public class EditorActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_IMAGE) {
             if (data == null) {
-                Toast.makeText(this, R.string.empty_image, Toast.LENGTH_SHORT);
+                Toast.makeText(this, R.string.empty_image, Toast.LENGTH_SHORT).show();
                 return;
             }
             try {
@@ -369,7 +368,7 @@ public class EditorActivity extends AppCompatActivity
                         mImageBA.length));
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(this, R.string.image_not_found, Toast.LENGTH_SHORT);
+                Toast.makeText(this, R.string.image_not_found, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -439,7 +438,7 @@ public class EditorActivity extends AppCompatActivity
         current -= bulk;
         if (current >= 0) {
             ((TextView) findViewById(R.id.edit_product_quantity)).setText(
-                    String.valueOf(current--));
+                    String.valueOf(current));
         } else {
             Toast.makeText(this, getString(R.string.editor_stock_short),
                     Toast.LENGTH_SHORT).show();
