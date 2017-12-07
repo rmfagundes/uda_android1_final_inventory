@@ -134,7 +134,7 @@ public class EditorActivity extends AppCompatActivity
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_buy_more:
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
                 emailIntent.setType("text/plain");
                 emailIntent.putExtra(Intent.EXTRA_EMAIL,
                         ((EditText)findViewById(R.id.edit_product_supplier_email)).getText());
