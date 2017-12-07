@@ -120,8 +120,13 @@ public class EditorActivity extends AppCompatActivity
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                saveProduct();
-                finish();
+                if (isBlank()) {
+                    Toast.makeText(this, getString(R.string.editor_cannot_insert_blank_product),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    saveProduct();
+                    finish();
+                }
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
@@ -129,14 +134,14 @@ public class EditorActivity extends AppCompatActivity
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_buy_more:
-                String mailTo = "mailto:" +
-                        ((EditText)findViewById(R.id.edit_product_supplier_email)).getText() +
-                        "?subject="+
-                        Uri.encode("Product order - " +
-                            ((EditText)findViewById(R.id.edit_product_name)).getText());
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                emailIntent.setData(Uri.parse(mailTo));
-                startActivity(emailIntent);
+                emailIntent.setType("text/plain");
+                emailIntent.putExtra(Intent.EXTRA_EMAIL,
+                        ((EditText)findViewById(R.id.edit_product_supplier_email)).getText());
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT,
+                        "Product order - " + ((EditText)findViewById(R.id.edit_product_name)).getText());
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "E-mail content.");
+                startActivity(Intent.createChooser(emailIntent, "Send e-mail"));
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
@@ -167,8 +172,6 @@ public class EditorActivity extends AppCompatActivity
     }
 
     private void saveProduct() {
-        if (isBlank()) return;
-
         // Read from input fields
         // Use trim to eliminate leading or trailing white space
         String nameString = ((EditText) findViewById(R.id.edit_product_name)).getText()
@@ -229,12 +232,11 @@ public class EditorActivity extends AppCompatActivity
     }
 
     private boolean isBlank() {
-        return (TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_name)).getText()) &&
+        return TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_name)).getText()) &&
                 TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_price)).getText()) &&
                 TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_supplier)).getText()) &&
                 TextUtils.isEmpty(((EditText) findViewById(R.id.edit_product_supplier_email)).getText()) &&
-                TextUtils.isEmpty(((TextView) findViewById(R.id.edit_product_quantity)).getText()) &&
-                !mCheckFollow.isChecked());
+                ((TextView) findViewById(R.id.edit_product_quantity)).getText().toString().equals("0");
     }
 
     @Override

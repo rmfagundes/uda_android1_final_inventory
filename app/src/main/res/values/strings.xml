@@ -77,4 +77,5 @@
 
     <!-- Toast message in editor when current product has failed to be deleted -->
     <string name="list_delete_products_failed">Error with deleting all products</string>
+    <string name="editor_cannot_insert_blank_product">Cannot insert blank product!</string>
 </resources>

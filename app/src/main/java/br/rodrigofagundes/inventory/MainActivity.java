@@ -10,9 +10,9 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,8 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import br.rodrigofagundes.inventory.data.ProductContract.ProductEntry;
-import br.rodrigofagundes.inventory.data.ProductProvider;
-
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -96,14 +94,7 @@ public class MainActivity extends AppCompatActivity
         values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, 200);
         values.put(ProductEntry.COLUMN_PRODUCT_FOLLOW, 1);
 
-        // Insert a new row for Toto in the database, returning the ID of that new row.
-        // The first argument for db.insert() is the products table name.
-        // The second argument provides the name of a column in which the framework
-        // can insert NULL in the event that the ContentValues is empty (if
-        // this is set to "null", then the framework will not insert a row when
-        // there are no values).
-        // The third argument is the ContentValues object containing the info for Toto.
-        Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
+        getContentResolver().insert(ProductEntry.CONTENT_URI, values);
     }
 
     private void showDeleteConfirmationDialog() {
